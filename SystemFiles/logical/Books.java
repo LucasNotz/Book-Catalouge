@@ -1,11 +1,11 @@
 package logical;
-
+//didnt even use
 public class Books {
 	//Class attributes
 	private String bookName = "";
 	private String isbn = "";
 	private String bookDescription = "";
-	private int timesRead = 0;
+	private String timesRead = "";
 	private String timesReadDescription = "";
 	
 	//Constructors
@@ -13,7 +13,7 @@ public class Books {
 		super();
 	}
 
-	public Books(String bookName, String isbn, String bookDescription, int timesRead, String timesReadDescription) {
+	public Books(String bookName, String isbn, String bookDescription, String timesRead, String timesReadDescription) {
 		super();
 		this.bookName = bookName;
 		this.isbn = isbn;
@@ -47,11 +47,11 @@ public class Books {
 		this.bookDescription = bookDescription;
 	}
 
-	public int getTimesRead() {
+	public String getTimesRead() {
 		return timesRead;
 	}
 
-	public void setTimesRead(int timesRead) {
+	public void setTimesRead(String timesRead) {
 		this.timesRead = timesRead;
 	}
 
