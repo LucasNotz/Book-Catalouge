@@ -1,9 +1,12 @@
 package ui;
 
-import java.io.BufferedReader;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -14,7 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import data.database;
+import data.BooksDAO;
 import logical.User;
 
 public class BookCatalouge extends JFrame {
@@ -46,11 +49,17 @@ public class BookCatalouge extends JFrame {
 			e.printStackTrace();
 		}
 		
-		//connect to database
-		database.connect();
+		//test if book table exists
+		try {
+			BooksDAO.createBookTable();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 		//Start gui
 		new BookCatalouge().setVisible(true);
+		
+		
 		
 	}
 	
@@ -59,13 +68,14 @@ public class BookCatalouge extends JFrame {
 	private JLabel booksOptionsLabel = new JLabel("Options: ");
 	
 	private JList<String> booksList = new JList<String>();
-	private JScrollPane booksScrollPane = new JScrollPane();
+	private JScrollPane booksScrollPane = new JScrollPane(booksList);
 	private DefaultListModel<String> booksDLM = new DefaultListModel<String>();
 	
 	private JButton addBooksButton = new JButton("Add");
 	private JButton removeBooksButton = new JButton("Remove");
 	private JButton editBooksButon = new JButton("Edit");
 	private JButton filterBooksButton= new JButton("Filter");
+	
 	
 	//main gui constructor
 	public BookCatalouge(){
@@ -76,26 +86,63 @@ public class BookCatalouge extends JFrame {
 		setResizable(false);
 		setLocationRelativeTo(null);
 		
+		
 		booksCatalougeLabel.setBounds(50,20,200,20);
 		add(booksCatalougeLabel);
 		
-		booksList.setBounds(50, 50, 500, 500);
-		add(booksList);
+		for(String book : BooksDAO.getAllBooksTitle()) {
+			booksDLM.addElement(book);
+		}
+		
+		booksScrollPane.setBounds(50, 50, 500, 500);
+		booksList.setModel(booksDLM);
+		add(booksScrollPane);
 		
 		booksOptionsLabel.setBounds(50,570, 200,20);
 		add(booksOptionsLabel);
 		
+		//add
 		addBooksButton.setBounds(50, 610, 100, 20);
 		add(addBooksButton);
 		
+		addBooksButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new AddBook(booksDLM, booksList).setVisible(true);
+				
+			}
+		});
+		
+		//remove
 		removeBooksButton.setBounds(170, 610, 100, 20);
 		add(removeBooksButton);
 		
+		removeBooksButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new RemoveBook(booksDLM, booksList).setVisible(true);
+				
+			}
+		});
+		
+		//edit
 		editBooksButon.setBounds(290, 610, 100, 20);
 		add(editBooksButon);
 		
-		filterBooksButton.setBounds(410, 610, 100, 20);
-		add(filterBooksButton);
-		
+		editBooksButon.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				for(String book : BooksDAO.getAllBooksTitle()) {
+					booksDLM.addElement(book);
+				}
+				
+				new EditBook(booksDLM, booksList,booksDLM.getElementAt(booksList.getSelectedIndex())).setVisible(true);
+				
+			}
+		});
 	}
 }
